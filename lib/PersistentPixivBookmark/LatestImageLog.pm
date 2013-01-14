@@ -14,7 +14,7 @@ sub get {
     my ($class) = @_;
     return '' unless -e &FILE_PATH_LATEST_IMAGE();
     my $latest_image_url = file(&FILE_PATH_LATEST_IMAGE())->slurp();
-    $latest_image_url =~ s/\r\n//g;
+    $latest_image_url =~ s/\r//g;
     chomp($latest_image_url);
     return $latest_image_url;
 }

@@ -59,13 +59,16 @@ sub get_unsaved_image_page_url_list {
 
 sub has_next {
     my ($self) = @_;
-    my $next_links = $self->crawler->find_all_links(
-        class   => 'button',
-        url_regex => qr/bookmark.php.+p=\d+/,
-    );
-    return $next_links
-        ? (scalar $next_links > 1) ? $next_links->[1] : $next_links->[0]
-        : $next_links;
+    my $html = $self->crawler->content();
+    my $next_link = Web::Query->new_from_html($html)->find('a.button')->filter(sub {
+        my ($i, $element) = @_;
+        $element->attr('href') =~ /bookmark\.php.+p=\d+/ &&
+        $element->attr('rel') eq 'next';
+    })->first();
+    return $next_link ? sprintf(
+        'http://www.pixiv.net/%s',
+        $next_link->attr('href'),
+    ) : '';
 }
 
 sub next {
